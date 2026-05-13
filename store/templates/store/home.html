@@ -1,0 +1,64 @@
+{% extends 'store/base.html' %}
+{% block title %}ShopEase - Home{% endblock %}
+
+{% block content %}
+<div class="hero">
+    <div class="container">
+        <h1>Welcome to ShopEase</h1>
+        <p>Your shopping experience starts here!</p>
+        <form method="get" action="{% url 'store:product_list' %}" class="search-box">
+            <input type="text" name="q" placeholder="Search products..." value="{{ request.GET.q }}">
+            <button type="submit">Search</button>
+        </form>
+    </div>
+</div>
+
+<div class="container mt-5">
+    <section class="categories-section">
+        <h2 class="section-title">Shop by Category</h2>
+        <div class="row g-4 mt-4">
+            {% for category in categories %}
+            <div class="col-md-4">
+                <a href="{% url 'store:category_products' category.slug %}" class="category-card d-block text-decoration-none text-dark">
+                    <div class="category-icon"><i class="bi bi-tags"></i></div>
+                    <h3>{{ category.name }}</h3>
+                    <p>Explore {{ category.name }} products</p>
+                </a>
+            </div>
+            {% empty %}
+            <p class="text-muted">No categories available yet.</p>
+            {% endfor %}
+        </div>
+    </section>
+
+    <section class="products-section mt-5">
+        <h2 class="section-title">Featured Products</h2>
+        <div class="row g-4 mt-4">
+            {% for product in featured_products %}
+            <div class="col-md-3">
+                <div class="product-card">
+                    {% if product.image %}
+                    <img src="{{ product.image.url }}" class="product-img w-100" alt="{{ product.name }}">
+                    {% else %}
+                    <div class="product-img w-100 d-flex align-items-center justify-content-center bg-light">
+                        <i class="bi bi-image text-muted" style="font-size: 4rem;"></i>
+                    </div>
+                    {% endif %}
+                    <div class="p-3">
+                        <h5 class="product-title mb-2"><a href="{{ product.get_absolute_url }}" class="text-decoration-none text-dark">{{ product.name }}</a></h5>
+                        <div class="d-flex align-items-center justify-content-between">
+                            <span class="product-price">${{ product.final_price }}</span>
+                            {% if product.is_on_sale %}
+                            <span class="badge badge-sale">Sale</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <p class="text-muted">No featured products available.</p>
+            {% endfor %}
+        </div>
+    </section>
+</div>
+{% endblock %}

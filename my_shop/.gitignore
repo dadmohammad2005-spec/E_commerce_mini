@@ -1,0 +1,8 @@
+# In terminal, create .gitignore file with:
+# venv/
+# *.pyc
+# __pycache__/
+# db.sqlite3
+# .env
+# media/
+# staticfiles/

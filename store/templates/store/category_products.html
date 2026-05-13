@@ -1,0 +1,61 @@
+{% extends 'store/base.html' %}
+{% block title %}{{ category.name }} - ShopEase{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="mb-4">
+        <h2 class="section-title">{{ category.name }}</h2>
+        <p class="text-muted">Browse products in the {{ category.name }} category.</p>
+    </div>
+    <div class="row g-4">
+        {% if products %}
+            {% for product in products %}
+            <div class="col-sm-6 col-xl-4">
+                <div class="card h-100">
+                    <div class="position-relative">
+                        {% if product.image %}
+                        <img src="{{ product.image.url }}" class="product-img w-100" alt="{{ product.name }}">
+                        {% else %}
+                        <div class="product-img w-100 d-flex align-items-center justify-content-center bg-light">
+                            <i class="bi bi-image text-muted" style="font-size: 4rem;"></i>
+                        </div>
+                        {% endif %}
+                        {% if product.is_on_sale %}
+                        <span class="badge badge-sale position-absolute top-0 start-0 m-2">-{{ product.discount_percentage }}%</span>
+                        {% endif %}
+                        {% if product.stock == 0 %}
+                        <span class="badge bg-secondary position-absolute top-0 end-0 m-2">Out of Stock</span>
+                        {% endif %}
+                    </div>
+                    <div class="card-body d-flex flex-column">
+                        <small class="text-muted mb-1">{{ product.category.name }}</small>
+                        <h6 class="card-title mb-2">
+                            <a href="{{ product.get_absolute_url }}" class="text-dark text-decoration-none">{{ product.name }}</a>
+                        </h6>
+                        <div class="mt-auto">
+                            <div class="d-flex align-items-center gap-2 mb-3">
+                                <span class="price-tag fs-5">${{ product.final_price }}</span>
+                                {% if product.is_on_sale %}
+                                <span class="old-price">${{ product.price }}</span>
+                                {% endif %}
+                            </div>
+                            {% if product.stock > 0 %}
+                            <a href="{% url 'store:add_to_cart' product.id %}" class="btn btn-accent w-100 btn-sm">
+                                <i class="bi bi-cart-plus me-1"></i>Add to Cart
+                            </a>
+                            {% else %}
+                            <button class="btn btn-secondary w-100 btn-sm" disabled>Out of Stock</button>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="col-12">
+                <div class="alert alert-info">No products found in this category.</div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

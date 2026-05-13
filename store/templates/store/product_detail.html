@@ -1,0 +1,162 @@
+{% extends 'base.html' %}
+{% block title %}{{ product.name }} - ShopEase{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'store:home' %}">Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'store:product_list' %}">Products</a></li>
+            <li class="breadcrumb-item active">{{ product.name }}</li>
+        </ol>
+    </nav>
+
+    <div class="row g-5">
+        <!-- Image -->
+        <div class="col-md-5">
+            <div class="card p-3">
+                {% if product.image %}
+                <img src="{{ product.image.url }}" class="img-fluid rounded" alt="{{ product.name }}">
+                {% else %}
+                <div class="d-flex align-items-center justify-content-center bg-light rounded" style="height: 400px;">
+                    <i class="bi bi-image text-muted" style="font-size: 6rem;"></i>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Details -->
+        <div class="col-md-7">
+            <span class="badge bg-secondary mb-2">{{ product.category.name }}</span>
+            <h1 class="h2 fw-bold mb-3">{{ product.name }}</h1>
+
+            <!-- Rating -->
+            <div class="d-flex align-items-center gap-2 mb-3">
+                {% for i in "12345" %}
+                <i class="bi bi-star{% if forloop.counter <= avg_rating %}-fill{% endif %} text-warning"></i>
+                {% endfor %}
+                <span class="text-muted small">({{ reviews.count }} reviews)</span>
+            </div>
+
+            <!-- Price -->
+            <div class="mb-4">
+                <span class="price-tag" style="font-size: 2rem;">${{ product.final_price }}</span>
+                {% if product.is_on_sale %}
+                <span class="old-price ms-2 fs-5">${{ product.price }}</span>
+                <span class="badge badge-sale ms-2">Save {{ product.discount_percentage }}%</span>
+                {% endif %}
+            </div>
+
+            <!-- Stock -->
+            <div class="mb-4">
+                {% if product.stock > 0 %}
+                <span class="text-success"><i class="bi bi-check-circle me-1"></i>In Stock ({{ product.stock }} available)</span>
+                {% else %}
+                <span class="text-danger"><i class="bi bi-x-circle me-1"></i>Out of Stock</span>
+                {% endif %}
+            </div>
+
+            <!-- Description -->
+            {% if product.description %}
+            <p class="text-muted mb-4">{{ product.description }}</p>
+            {% endif %}
+
+            <!-- Actions -->
+            {% if product.stock > 0 %}
+            <div class="d-flex gap-3">
+                <a href="{% url 'store:add_to_cart' product.id %}" class="btn btn-accent btn-lg px-5">
+                    <i class="bi bi-cart-plus me-2"></i>Add to Cart
+                </a>
+                <a href="{% url 'store:cart' %}" class="btn btn-outline-secondary btn-lg">
+                    <i class="bi bi-cart3"></i>
+                </a>
+            </div>
+            {% else %}
+            <button class="btn btn-secondary btn-lg" disabled>Out of Stock</button>
+            {% endif %}
+
+            <!-- Features -->
+            <div class="mt-4 pt-4 border-top">
+                <div class="row g-3 text-center">
+                    <div class="col-4">
+                        <i class="bi bi-truck text-accent fs-4 d-block mb-1" style="color: #e94560;"></i>
+                        <small class="text-muted">Free Shipping</small>
+                    </div>
+                    <div class="col-4">
+                        <i class="bi bi-shield-check fs-4 d-block mb-1" style="color: #e94560;"></i>
+                        <small class="text-muted">Secure Purchase</small>
+                    </div>
+                    <div class="col-4">
+                        <i class="bi bi-arrow-counterclockwise fs-4 d-block mb-1" style="color: #e94560;"></i>
+                        <small class="text-muted">Easy Returns</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reviews -->
+    <div class="row mt-5">
+        <div class="col-md-8">
+            <h4 class="section-title mb-4">Customer Reviews</h4>
+            {% if reviews %}
+                {% for review in reviews %}
+                <div class="card mb-3 p-4">
+                    <div class="d-flex justify-content-between mb-2">
+                        <strong>{{ review.user.get_full_name|default:review.user.username }}</strong>
+                        <small class="text-muted">{{ review.created_at|date:"M d, Y" }}</small>
+                    </div>
+                    <div class="mb-2">
+                        {% for i in "12345" %}
+                        <i class="bi bi-star{% if forloop.counter <= review.rating %}-fill{% endif %} text-warning"></i>
+                        {% endfor %}
+                    </div>
+                    <p class="mb-0">{{ review.comment }}</p>
+                </div>
+                {% endfor %}
+            {% else %}
+                <p class="text-muted">No reviews yet. Be the first to review!</p>
+            {% endif %}
+
+            {% if user.is_authenticated %}
+            <div class="card p-4 mt-4">
+                <h5 class="mb-3">Write a Review</h5>
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label class="form-label">Rating</label>
+                        <div class="d-flex gap-3">
+                            {% for choice in review_form.rating.field.choices %}
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="rating" value="{{ choice.0 }}" id="rating_{{ choice.0 }}">
+                                <label class="form-check-label" for="rating_{{ choice.0 }}">{{ choice.1 }}</label>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Comment</label>
+                        {{ review_form.comment }}
+                    </div>
+                    <button type="submit" class="btn btn-accent">Submit Review</button>
+                </form>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Related Products -->
+    {% if related %}
+    <div class="mt-5">
+        <h4 class="section-title mb-4">Related Products</h4>
+        <div class="row g-4">
+            {% for p in related %}
+            <div class="col-6 col-md-3">
+                {% with product=p %}{% include 'store/partials/product_card.html' %}{% endwith %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

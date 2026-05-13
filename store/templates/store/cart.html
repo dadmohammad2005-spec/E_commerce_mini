@@ -1,0 +1,58 @@
+{% extends 'store/base.html' %}
+{% block title %}Cart - ShopEase{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <h2 class="section-title mb-4">Your Cart</h2>
+            {% if cart.cartitems.exists %}
+            <div class="table-responsive">
+                <table class="table table-bordered align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Product</th>
+                            <th>Price</th>
+                            <th>Quantity</th>
+                            <th>Total</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in cart.cartitems.all %}
+                        <tr>
+                            <td>
+                                <strong>{{ item.product.name }}</strong><br>
+                                <small class="text-muted">{{ item.product.category.name }}</small>
+                            </td>
+                            <td>${{ item.product.final_price }}</td>
+                            <td>
+                                <form method="post" action="{% url 'store:update_cart' item.id %}" class="d-flex gap-2 align-items-center">
+                                    {% csrf_token %}
+                                    <input type="number" name="quantity" value="{{ item.quantity }}" min="1" class="form-control form-control-sm" style="width: 80px;">
+                                    <button type="submit" class="btn btn-sm btn-accent">Update</button>
+                                </form>
+                            </td>
+                            <td>${{ item.get_total }}</td>
+                            <td>
+                                <a href="{% url 'store:remove_from_cart' item.id %}" class="btn btn-sm btn-outline-danger">Remove</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="d-flex justify-content-end align-items-center gap-4 mt-4">
+                <div>
+                    <h5>Cart Total</h5>
+                    <p class="fs-4 fw-bold">${{ cart.get_total }}</p>
+                </div>
+                <a href="{% url 'store:checkout' %}" class="btn btn-accent btn-lg">Proceed to Checkout</a>
+            </div>
+            {% else %}
+            <div class="alert alert-info">Your cart is empty. Browse products to add items.</div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

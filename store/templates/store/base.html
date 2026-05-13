@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}ShopEase{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+    :root {
+        --primary: #2c3e50;
+        --secondary: #34495e;
+        --accent: #e74c3c;
+        --success: #27ae60;
+        --warning: #f39c12;
+        --info: #3498db;
+        --light: #ecf0f1;
+        --dark: #2c3e50;
+        --gray: #95a5a6;
+        --white: #ffffff;
+        --shadow: 0 2px 10px rgba(0,0,0,0.1);
+        --transition: all 0.3s ease;
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: #f8f9fa;
+        color: #333;
+        line-height: 1.6;
+    }
+
+    /* Navbar Styles */
+    .navbar {
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        box-shadow: var(--shadow);
+        padding: 1rem 0;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+    }
+
+    .navbar-brand {
+        font-size: 1.8rem;
+        font-weight: bold;
+        color: var(--white) !important;
+        transition: var(--transition);
+    }
+
+    .navbar-brand:hover {
+        transform: scale(1.05);
+        color: var(--accent) !important;
+    }
+
+    .nav-link {
+        color: var(--white) !important;
+        transition: var(--transition);
+        font-weight: 500;
+    }
+
+    .nav-link:hover {
+        color: var(--accent) !important;
+        transform: translateY(-2px);
+    }
+
+    /* Hero Section */
+    .hero {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 80px 0;
+        text-align: center;
+        margin-bottom: 40px;
+        border-radius: 0 0 30px 30px;
+    }
+
+    .hero h1 {
+        font-size: 3rem;
+        margin-bottom: 20px;
+        animation: fadeInUp 0.8s ease;
+    }
+
+    .hero p {
+        font-size: 1.2rem;
+        margin-bottom: 30px;
+        animation: fadeInUp 1s ease;
+    }
+
+    .hero .btn {
+        animation: fadeInUp 1.2s ease;
+    }
+
+    /* Categories Section */
+    .categories-section {
+        padding: 40px 0;
+        background: var(--white);
+    }
+
+    .section-title {
+        text-align: center;
+        margin-bottom: 40px;
+        font-size: 2.2rem;
+        font-weight: bold;
+        position: relative;
+        padding-bottom: 15px;
+    }
+
+    .section-title::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80px;
+        height: 3px;
+        background: var(--accent);
+    }
+
+    .category-card {
+        background: var(--white);
+        border-radius: 15px;
+        padding: 30px;
+        text-align: center;
+        transition: var(--transition);
+        box-shadow: var(--shadow);
+        cursor: pointer;
+        margin-bottom: 20px;
+    }
+
+    .category-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    }
+
+    .category-icon {
+        font-size: 3rem;
+        margin-bottom: 15px;
+        display: inline-block;
+    }
+
+    .category-card h3 {
+        margin-bottom: 10px;
+        color: var(--primary);
+    }
+
+    .category-card p {
+        color: var(--gray);
+    }
+
+    /* Product Cards */
+    .products-section {
+        padding: 40px 0;
+        background: #f8f9fa;
+    }
+
+    .product-card {
+        background: var(--white);
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: var(--shadow);
+        transition: var(--transition);
+        margin-bottom: 30px;
+        position: relative;
+    }
+
+    .product-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    }
+
+    .product-badge {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: var(--accent);
+        color: white;
+        padding: 5px 10px;
+        border-radius: 5px;
+        font-size: 0.8rem;
+        font-weight: bold;
+        z-index: 1;
+    }
+
+    .product-img {
+        width: 100%;
+        height: 250px;
+        object-fit: cover;
+        transition: var(--transition);
+    }
+
+    .product-card:hover .product-img {
+        transform: scale(1.05);
+    }
+
+    .product-info {
+        padding: 20px;
+    }
+
+    .product-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 10px;
+        color: var(--primary);
+    }
+
+    .product-price {
+        font-size: 1.3rem;
+        font-weight: bold;
+        color: var(--accent);
+        margin-bottom: 10px;
+    }
+
+    .old-price {
+        text-decoration: line-through;
+        color: var(--gray);
+        font-size: 0.9rem;
+        margin-left: 10px;
+    }
+
+    .btn-add-to-cart {
+        background: var(--primary);
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 25px;
+        width: 100%;
+        transition: var(--transition);
+        font-weight: 500;
+    }
+
+    .btn-add-to-cart:hover {
+        background: var(--accent);
+        transform: translateY(-2px);
+    }
+
+    /* Buttons */
+    .btn {
+        padding: 12px 30px;
+        border-radius: 25px;
+        font-weight: 500;
+        transition: var(--transition);
+        border: none;
+        cursor: pointer;
+    }
+
+    .btn-primary {
+        background: var(--accent);
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background: #c0392b;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(231, 76, 60, 0.3);
+    }
+
+    .btn-outline {
+        background: transparent;
+        border: 2px solid var(--accent);
+        color: var(--accent);
+    }
+
+    .btn-outline:hover {
+        background: var(--accent);
+        color: white;
+    }
+
+    /* Search Box */
+    .search-box {
+        max-width: 500px;
+        margin: 20px auto;
+        position: relative;
+    }
+
+    .search-box input {
+        width: 100%;
+        padding: 12px 20px;
+        border: 2px solid #ddd;
+        border-radius: 25px;
+        font-size: 1rem;
+        transition: var(--transition);
+    }
+
+    .search-box input:focus {
+        outline: none;
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.1);
+    }
+
+    .search-box button {
+        position: absolute;
+        right: 5px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: var(--accent);
+        color: white;
+        border: none;
+        padding: 8px 20px;
+        border-radius: 25px;
+        cursor: pointer;
+    }
+
+    /* Footer */
+    footer {
+        background: var(--primary);
+        color: var(--white);
+        padding: 50px 0 20px;
+        margin-top: 50px;
+    }
+
+    footer h5 {
+        margin-bottom: 20px;
+        font-size: 1.2rem;
+    }
+
+    footer a {
+        color: var(--white);
+        text-decoration: none;
+        transition: var(--transition);
+    }
+
+    footer a:hover {
+        color: var(--accent);
+        padding-left: 5px;
+    }
+
+    .social-icons {
+        margin-top: 20px;
+    }
+
+    .social-icons a {
+        display: inline-block;
+        margin-right: 15px;
+        font-size: 1.5rem;
+    }
+
+    /* Animations */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .fade-in {
+        animation: fadeInUp 0.6s ease;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .hero h1 {
+            font-size: 2rem;
+        }
+        
+        .hero p {
+            font-size: 1rem;
+        }
+        
+        .section-title {
+            font-size: 1.8rem;
+        }
+        
+        .product-img {
+            height: 200px;
+        }
+    }
+
+    /* Messages/Alerts */
+    .alert {
+        padding: 15px 20px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        border-left: 4px solid;
+        animation: slideIn 0.3s ease;
+    }
+
+    .alert-success {
+        background: #d4edda;
+        color: #155724;
+        border-left-color: #28a745;
+    }
+
+    .alert-error {
+        background: #f8d7da;
+        color: #721c24;
+        border-left-color: #dc3545;
+    }
+
+    @keyframes slideIn {
+        from {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+
+    /* Loading Spinner */
+    .spinner {
+        border: 3px solid #f3f3f3;
+        border-top: 3px solid var(--accent);
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        animation: spin 1s linear infinite;
+        margin: 20px auto;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+        :root {
+            --primary: #1a1a2e;
+            --accent: #e94560;
+            --light-bg: #f8f9fa;
+        }
+        body { font-family: 'Segoe UI', sans-serif; background: #f5f5f5; }
+        .navbar { background: var(--primary) !important; }
+        .navbar-brand { color: white !important; font-weight: 700; font-size: 1.5rem; }
+        .nav-link { color: rgba(255,255,255,0.85) !important; }
+        .nav-link:hover { color: var(--accent) !important; }
+        .btn-accent { background: var(--accent); color: white; border: none; }
+        .btn-accent:hover { background: #c73652; color: white; }
+        .card { border: none; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); transition: transform 0.2s, box-shadow 0.2s; }
+        .card:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0,0,0,0.12); }
+        .product-img { height: 220px; object-fit: cover; border-radius: 12px 12px 0 0; }
+        .badge-sale { background: var(--accent); }
+        .cart-badge { background: var(--accent); font-size: 0.65rem; }
+        footer { background: var(--primary); color: rgba(255,255,255,0.75); }
+        .price-tag { color: var(--accent); font-weight: 700; }
+        .old-price { text-decoration: line-through; color: #999; font-size: 0.9rem; }
+        .section-title { font-weight: 700; position: relative; padding-bottom: 10px; }
+        .section-title::after { content: ''; position: absolute; bottom: 0; left: 0; width: 50px; height: 3px; background: var(--accent); }
+        .messages-container { position: fixed; top: 70px; right: 20px; z-index: 9999; min-width: 300px; }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+    <div class="container">
+        <a class="navbar-brand" href="{% url 'store:home' %}">
+            <i class="bi bi-bag-heart-fill me-2"></i>ShopEase
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <form class="d-flex mx-auto" style="width: 40%;" method="get" action="{% url 'store:product_list' %}">
+                <input class="form-control me-2" type="search" name="q" placeholder="Search products..." value="{{ request.GET.q }}">
+                <button class="btn btn-accent" type="submit"><i class="bi bi-search"></i></button>
+            </form>
+            <ul class="navbar-nav ms-auto align-items-center gap-2">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'store:product_list' %}">
+                        <i class="bi bi-grid me-1"></i>Shop
+                    </a>
+                </li>
+                {% if user.is_authenticated %}
+                <li class="nav-item">
+                    <a class="nav-link position-relative" href="{% url 'store:cart' %}">
+                        <i class="bi bi-cart3 fs-5"></i>
+                        {% if cart_count %}
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill cart-badge">
+                            {{ cart_count }}
+                        </span>
+                        {% endif %}
+                    </a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                        <i class="bi bi-person-circle me-1"></i>{{ user.username }}
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="{% url 'store:order_list' %}"><i class="bi bi-bag me-2"></i>My Orders</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item text-danger" href="{% url 'store:logout' %}"><i class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
+                    </ul>
+                </li>
+                {% else %}
+                <li class="nav-item">
+                    <a class="btn btn-outline-light btn-sm" href="{% url 'store:login' %}">Login</a>
+                </li>
+                <li class="nav-item">
+                    <a class="btn btn-accent btn-sm" href="{% url 'store:register' %}">Register</a>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- Messages -->
+<div class="messages-container">
+    {% for message in messages %}
+    <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show shadow" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    {% endfor %}
+</div>
+
+<main>
+    {% block content %}{% endblock %}
+</main>
+
+<footer class="py-5 mt-5">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-md-4">
+                <h5 class="text-white fw-bold"><i class="bi bi-bag-heart-fill me-2"></i>ShopEase</h5>
+                <p class="small">Your one-stop destination for quality products at great prices.</p>
+            </div>
+            <div class="col-md-4">
+                <h6 class="text-white">Quick Links</h6>
+                <ul class="list-unstyled small">
+                    <li><a href="{% url 'store:home' %}" class="text-decoration-none" style="color: inherit;">Home</a></li>
+                    <li><a href="{% url 'store:product_list' %}" class="text-decoration-none" style="color: inherit;">All Products</a></li>
+                    {% if user.is_authenticated %}
+                    <li><a href="{% url 'store:order_list' %}" class="text-decoration-none" style="color: inherit;">My Orders</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+            <div class="col-md-4">
+                <h6 class="text-white">Contact</h6>
+                <p class="small"><i class="bi bi-envelope me-2"></i>support@shopease.com</p>
+                <p class="small"><i class="bi bi-telephone me-2"></i>+1 (555) 123-4567</p>
+            </div>
+        </div>
+        <hr style="border-color: rgba(255,255,255,0.1);">
+        <p class="text-center small mb-0">&copy; 2024 ShopEase. All rights reserved.</p>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+{% block extra_js %}{% endblock %}
+</body>
+</html> 
